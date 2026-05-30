@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>星灯りの総合占い</title>
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;
+  background:
+    radial-gradient(circle at top,#fff2c6 0,#2b1055 35%,#090018 100%);
+  color:#fff;
+  text-align:center;
+  padding:30px 15px;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(#fff 1px,transparent 1px),
+    radial-gradient(#ffd 1px,transparent 1px);
+  background-size:70px 70px,120px 120px;
+  opacity:.35;
+  pointer-events:none;
+}
+
+.box{
+  position:relative;
+  max-width:620px;
+  margin:auto;
+  padding:28px;
+  border-radius:28px;
+  background:rgba(20,8,45,.82);
+  box-shadow:0 0 35px rgba(255,215,120,.35);
+  border:1px solid rgba(255,225,150,.5);
+  backdrop-filter:blur(8px);
+}
+
+h1{
+  margin-top:0;
+  color:#ffe8a3;
+  font-size:32px;
+  letter-spacing:.08em;
+  text-shadow:0 0 12px #ffd36b;
+}
+
+.subtitle{
+  color:#e8dcff;
+  line-height:1.8;
+}
+
+input{
+  width:85%;
+  font-size:18px;
+  padding:13px;
+  margin:8px;
+  border-radius:999px;
+  border:1px solid #d7b86a;
+  background:rgba(255,255,255,.92);
+  text-align:center;
+}
+
+button{
+  width:85%;
+  font-size:20px;
+  padding:14px;
+  margin:18px 0 8px;
+  border:0;
+  border-radius:999px;
+  color:#2b174f;
+  font-weight:bold;
+  cursor:pointer;
+  background:linear-gradient(135deg,#ffe9a8,#d6a93f,#fff1bd);
+  box-shadow:0 0 18px rgba(255,220,120,.7);
+}
+
+button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 0 25px rgba(255,230,150,.95);
+}
+
+.result{
+  display:none;
+  text-align:left;
+  margin-top:22px;
+  padding:24px;
+  border-radius:22px;
+  background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.06));
+  border:1px solid rgba(255,230,170,.4);
+  line-height:1.9;
+}
+
+.result h2{
+  text-align:center;
+  color:#ffe8a3;
+  margin-top:0;
+}
+
+.card{
+  background:rgba(255,255,255,.09);
+  border-left:4px solid #ffd86b;
+  padding:13px 15px;
+  border-radius:14px;
+  margin:12px 0;
+}
+
+.label{
+  color:#ffe8a3;
+  font-weight:bold;
+}
+
+.big{
+  font-size:22px;
+  color:#fff0b5;
+  font-weight:bold;
+}
+
+.advice{
+  margin-top:18px;
+  padding:18px;
+  border-radius:18px;
+  background:rgba(255,223,120,.14);
+}
+
+.small{
+  color:#ddd0ff;
+  font-size:14px;
+  text-align:center;
+  margin-top:18px;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h1>星灯りの総合占い</h1>
+  <p class="subtitle">
+    生年月日から、星座・九星・数秘・動物タイプを読み解きます。<br>
+    あなたの今日の流れを、少し神秘的に占います。
+  </p>
+
+  <input type="number" id="y" placeholder="年 例：2000">
+  <input type="number" id="m" placeholder="月 例：1">
+  <input type="number" id="d" placeholder="日 例：3">
+
+  <button onclick="uranai()">水晶に映す</button>
+
+  <div id="result" class="result"></div>
+</div>
+
+<script>
+function uranai(){
+  const y = Number(document.getElementById("y").value);
+  const m = Number(document.getElementById("m").value);
+  const day = Number(document.getElementById("d").value);
+
+  if(!y || !m || !day){
+    alert("生年月日をすべて入力してください");
+    return;
+  }
+
+  const inputDate = new Date(y, m - 1, day);
+  if(inputDate.getFullYear() !== y || inputDate.getMonth() !== m - 1 || inputDate.getDate() !== day){
+    alert("正しい日付を入力してください");
+    return;
+  }
+
+  let seiza = "";
+  if((m==3&&day>=21)||(m==4&&day<=19)) seiza="牡羊座";
+  else if((m==4&&day>=20)||(m==5&&day<=20)) seiza="牡牛座";
+  else if((m==5&&day>=21)||(m==6&&day<=21)) seiza="双子座";
+  else if((m==6&&day>=22)||(m==7&&day<=22)) seiza="蟹座";
+  else if((m==7&&day>=23)||(m==8&&day<=22)) seiza="獅子座";
+  else if((m==8&&day>=23)||(m==9&&day<=22)) seiza="乙女座";
+  else if((m==9&&day>=23)||(m==10&&day<=23)) seiza="天秤座";
+  else if((m==10&&day>=24)||(m==11&&day<=22)) seiza="蠍座";
+  else if((m==11&&day>=23)||(m==12&&day<=21)) seiza="射手座";
+  else if((m==12&&day>=22)||(m==1&&day<=19)) seiza="山羊座";
+  else if((m==1&&day>=20)||(m==2&&day<=18)) seiza="水瓶座";
+  else seiza="魚座";
+
+  const seizaText = {
+    "牡羊座":"決断が早く、先頭に立つほど運が開きます。思いついたことは小さく始めると吉。",
+    "牡牛座":"安定と信頼を大切にする人。焦らず積み重ねることで大きな成果を得ます。",
+    "双子座":"情報・会話・移動に運があります。人との雑談からチャンスが生まれます。",
+    "蟹座":"家族や仲間を守る力が強い人。身近な人への気配りが幸運を呼びます。",
+    "獅子座":"表現力と存在感が魅力。遠慮せず自分の得意分野を見せると評価されます。",
+    "乙女座":"分析力と調整力に優れています。細かい確認が成功への近道です。",
+    "天秤座":"バランス感覚と人脈運があります。美しいものや上質な場所が運気を上げます。",
+    "蠍座":"集中力と洞察力が強い人。ひとつのことを深めるほど運命が動きます。",
+    "射手座":"自由と挑戦に運があります。学び・旅行・新しい出会いが開運の鍵。",
+    "山羊座":"責任感と継続力の星。時間をかけた努力が確実に形になります。",
+    "水瓶座":"独創性と未来志向の持ち主。常識に縛られない発想が武器になります。",
+    "魚座":"感受性と癒しの力があります。直感を信じることで良い選択ができます。"
+  };
+
+  const kan = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+  const shi = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  const shichu = kan[y % 10] + shi[y % 12];
+
+  const kyusei = ["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"];
+  const k = kyusei[(11 - (y % 9)) % 9];
+
+  const kyuseiText = {
+    "一白水星":"人間関係と柔軟性がテーマ。聞き役に回ると信頼が増します。",
+    "二黒土星":"育てる力と継続運。裏方の努力が後から大きく評価されます。",
+    "三碧木星":"発信力と行動力。朝の行動がその日の運を強めます。",
+    "四緑木星":"ご縁と信用の星。紹介・連絡・相談に幸運があります。",
+    "五黄土星":"中心運が強い星。責任ある立場で実力を発揮できます。",
+    "六白金星":"仕事運と勝負運。目標を明確にすると成果が出やすいです。",
+    "七赤金星":"会話・食事・楽しみの星。笑顔が金運と人気運を上げます。",
+    "八白土星":"変化と蓄積の星。片付けや見直しが運気を整えます。",
+    "九紫火星":"直感・美・名誉の星。見た目や言葉を磨くと評価が上がります。"
+  };
+
+  let s = (y + "" + m + "" + day).split("").reduce((a,c)=>a+Number(c),0);
+  while(s > 9){
+    s = (s + "").split("").reduce((a,c)=>a+Number(c),0);
+  }
+
+  const numerology = {
+    1:"リーダー運。自分で決めて動くほど道が開けます。",
+    2:"調和運。誰かを支えることで自分の運も上がります。",
+    3:"表現運。話す・書く・作ることで魅力が輝きます。",
+    4:"安定運。計画表や整理整頓が成功を呼びます。",
+    5:"変化運。新しい場所・新しい人・新しい方法が吉。",
+    6:"愛情運。身近な人を大切にすると豊かさが返ってきます。",
+    7:"探求運。一人の時間や学びが大きな気づきを与えます。",
+    8:"達成運。仕事・お金・目標達成に強い力があります。",
+    9:"完成運。手放しと許しが次の幸運を連れてきます。"
+  };
+
+  const animals = ["ライオン","チーター","黒ひょう","コアラ","ゾウ","たぬき","ペガサス","ひつじ","狼","猿","虎","こじか"];
+  const animal = animals[(y + m + day) % animals.length];
+
+  const animalText = {
+    "ライオン":"誇り高く華やか。頼られるほど力を発揮します。",
+    "チーター":"スピード勝負に強いタイプ。即行動が幸運の合図。",
+    "黒ひょう":"美意識とスマートさが魅力。センスを活かすと吉。",
+    "コアラ":"先読み上手。無理せず心地よい環境を整えると運気上昇。",
+    "ゾウ":"努力家で粘り強い人。最後まで続けたものが実ります。",
+    "たぬき":"愛され上手で順応性あり。年上や経験者から幸運が来ます。",
+    "ペガサス":"自由な発想の持ち主。型にはまらないほど輝きます。",
+    "ひつじ":"仲間思いで協調性抜群。チームの中で運が伸びます。",
+    "狼":"個性派でマイペース。一人で集中すると実力が開花します。",
+    "猿":"器用で明るい人気者。小さな工夫が大きな成果に。",
+    "虎":"面倒見がよく堂々とした人。信頼関係が財産になります。",
+    "こじか":"純粋で愛されるタイプ。素直な気持ちが幸運を招きます。"
+  };
+
+  const luckyColors = ["金色","紫","深い青","白","ラベンダー","ワインレッド","翡翠色","桜色","銀色"];
+  const luckyItems = ["丸い鏡","天然石","温かいお茶","古い本","香りの良いハンドクリーム","星柄の小物","革の財布","青いペン","小さな花"];
+  const actions = [
+    "午前中に大事な連絡をする",
+    "財布の中を整理する",
+    "気になっていた人へ短いメッセージを送る",
+    "部屋の東側を整える",
+    "5分だけ静かに目を閉じる",
+    "予定をひとつ減らして余白を作る",
+    "新しい情報をひとつ調べる",
+    "ありがとうを一回多く伝える",
+    "夜に明日の準備をしておく"
+  ];
+
+  const seed = y + m * 31 + day * 17;
+  const color = luckyColors[seed % luckyColors.length];
+  const item = luckyItems[seed % luckyItems.length];
+  const action = actions[seed % actions.length];
+
+  const love = [
+    "相手の話を最後まで聞くことで関係が深まります。",
+    "飾らない言葉が魅力になります。無理に良く見せなくて大丈夫。",
+    "昔の縁より、今自然に話せる相手を大切にすると吉。",
+    "感謝を言葉にすると、恋愛運・対人運が同時に上がります。"
+  ][seed % 4];
+
+  const money = [
+    "大きな買い物より、固定費の見直しに金運があります。",
+    "信用を積み上げる行動が後の収入につながります。",
+    "財布や口座を整えると、お金の流れが良くなります。",
+    "人への小さな贈り物が巡って豊かさを呼びます。"
+  ][(seed + 1) % 4];
+
+  const work = [
+    "ひとつの作業を丁寧に仕上げることで評価が上がります。",
+    "新しい提案より、今ある問題の整理にツキがあります。",
+    "相談・報告を早めにすると、味方が増えます。",
+    "得意なことを言葉にして伝えると仕事運が開きます。"
+  ][(seed + 2) % 4];
+
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  result.innerHTML = `
+    <h2>🔮 占い結果 🔮</h2>
+
+    <div class="card">
+      <span class="label">西洋占星術：</span>
+      <span class="big">${seiza}</span><br>
+      ${seizaText[seiza]}
+    </div>
+
+    <div class="card">
+      <span class="label">四柱推命風：</span>
+      <span class="big">${shichu}</span><br>
+      あなたの年の気は「${shichu}」。外に出す力と内に秘める粘りをあわせ持つ運勢です。
+    </div>
+
+    <div class="card">
+      <span class="label">九星気学：</span>
+      <span class="big">${k}</span><br>
+      ${kyuseiText[k]}
+    </div>
+
+    <div class="card">
+      <span class="label">数秘術：</span>
+      <span class="big">${s}</span><br>
+      ${numerology[s]}
+    </div>
+
+    <div class="card">
+      <span class="label">動物占い風：</span>
+      <span class="big">${animal}</span><br>
+      ${animalText[animal]}
+    </div>
+
+    <div class="advice">
+      <b>今日の総合運</b><br>
+      今日は「整えること」と「一歩踏み出すこと」の両方が大切な日です。
+      気になっていた用事をひとつ片付けると、停滞していた運気が動き始めます。<br><br>
+
+      <b>恋愛・人間関係：</b>${love}<br>
+      <b>金運：</b>${money}<br>
+      <b>仕事運：</b>${work}<br><br>
+
+      <b>ラッキーカラー：</b>${color}<br>
+      <b>ラッキーアイテム：</b>${item}<br>
+      <b>開運アクション：</b>${action}
+    </div>
+
+    <p class="small">※この占いは娯楽用です。今日を少し楽しくするヒントとしてお楽しみください。</p>
+  `;
+}
+</script>
+
+</body>
+</html>
